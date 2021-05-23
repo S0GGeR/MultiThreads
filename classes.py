@@ -1,9 +1,6 @@
-import concurrent.futures
-import logging
 import queue
 import random
 import threading
-import time
 import datetime
 
 
@@ -16,7 +13,7 @@ class MultiThreadSimulator:
         # Объект, необходимый для активации критической сессии (заблокировать выполнение блока кода)
         self.lock = threading.Lock()
         # Добавление задачи 'А' в словарь, инициализации потока
-        self.tasks.update({'A': threading.Thread(target=self.task_a, args=(2 ** 20,), name='A')})
+        self.tasks.update({'A': threading.Thread(target=self.task_a, args=(2 ** 21,), name='A')})
         # Запуск потока 'А'
         self.tasks['A'].start()
         # Очередь, для задач
