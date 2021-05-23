@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="UTF-8">
+    <title>Моделирование диспетчера задач</title>
+    <script type="text/javascript" src="/eel.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue@latest/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+    <style>
+        .process {
+            margin-bottom: 25px;
+        }
+
+        .console_body__item {
+            margin-top: -20px;
+        }
+
+        .active_process {
+            height: 20px;
+            width: 150px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            background: #6FCF97;
+        }
+
+        .disable_process {
+            height: 20px;
+            width: 150px;
+            border: 2px solid #6FCF97;
+            border-radius: 10px;
+            background: transparent;
+        }
+
+        .process_name > h3 {
+            color: #7879F1;
+            font-size: 24px;
+        }
+
+        .process_name {
+            margin-left: 10px;
+            margin-bottom: -8px;
+        }
+
+        .console_header > h2 {
+            color: #7879F1;
+            font-size: 32px;
+        }
+
+        .console_body {
+            z-index: 0;
+            height: 425px;
+            background: rgba(111, 207, 51, 0.2);
+            /*background: #ECF9F5;*/
+            border-radius: 20px;
+            margin-top: 5px;
+            padding-top: 20px;
+        }
+
+        .console_body__date {
+
+            margin-left: 25px;
+            font-size: 15px;
+            color: #63cb8e;
+        }
+
+        .console_body__info {
+            position: absolute;
+            margin-left: 205px;
+            z-index: 1;
+            font-size: 15px;
+            color: #7879F1;
+        }
+
+        .submit_button {
+            background: #7879F1;
+            width: 165px;
+            height: 45px;
+            border: 1px solid transparent;
+            border-radius: 22px;
+            color: white;
+        }
+        .console {
+            margin-top: -20px;
+        }
+    </style>
+</head>
+<body class="bg-light" style="font-family: 'Montserrat', sans-serif !important;">
+
+<div class="container-fluid" id="app">
+    <div class="row">
+        <div class="col-12 text-center mt-5 mb-5" style="color: #7879F1;">
+            <h1>Симуляция работы параллельных процессов</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 d-flex">
+            <div class="col-4">
+                <div class="process">
+                    <div class="process_name">
+                        <h3>A</h3>
+                    </div>
+                    <div class="disable_process" ref="A"></div>
+                </div>
+                <div class="process">
+                    <div class="process_name">
+                        <h3>B</h3>
+                    </div>
+                    <div class="disable_process" ref="B"></div>
+                </div>
+                <div class="process">
+                    <div class="process_name">
+                        <h3>C</h3>
+                    </div>
+                    <div class="disable_process" ref="C"></div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="process">
+                    <div class="process_name">
+                        <h3>D</h3>
+                    </div>
+                    <div class="disable_process" ref="D"></div>
+                </div>
+                <div class="process">
+                    <div class="process_name">
+                        <h3>E</h3>
+                    </div>
+                    <div class="disable_process" ref="E"></div>
+                </div>
+                <div class="process">
+                    <div class="process_name">
+                        <h3>F</h3>
+                    </div>
+                    <div class="disable_process" ref="F"></div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="process">
+                    <div class="process_name">
+                        <h3>G</h3>
+                    </div>
+                    <div class="disable_process" ref="G"></div>
+                </div>
+                <div class="process">
+                    <div class="process_name">
+                        <h3>H</h3>
+                    </div>
+                    <div class="disable_process" ref="H"></div>
+                </div>
+                <div class="process">
+                    <div class="process_name">
+                        <h3>K</h3>
+                    </div>
+                    <div class="disable_process" ref="K"></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-6">
+            <div class="console">
+                <div class="console_header">
+                    <h2>Консоль</h2>
+                </div>
+                <div class="console_body" id="console">
+                    <div v-for="item in items" class="d-flex p-0 console_body__item">
+                        <p class="console_body__date">{{item.date}}:</p>
+                        <p class="console_body__info">{{item.message}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="d-flex justify-content-center" style="margin-top: -120px">
+                    <div>
+                        <button class="submit_button" v-on:click="simulate()">Запустить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            priority: '',
+            coefficient: '',
+            time: '',
+            interval: '',
+            items: [],
+            fields: [
+                {
+                    key: 'cycle_number',
+                    label: 'Номер такта'
+                },
+                {
+                    key: 'work_process',
+                    label: 'Загрузка процессора'
+                },
+                {
+                    key: 'ready_processes',
+                    label: 'Очередь готовности'
+                }
+            ],
+        }, methods: {
+            simulate: async function (event) {
+                eel.execute_program_py()();
+                setInterval(async () => {
+                    let active_threads = await eel.get_active_thread_py()();
+                    let log = await eel.get_program_log_py()();
+                    log = JSON.parse(log)
+                    this.items = []
+                    log.forEach((e) => {
+                        const [date, info] = e.split(': ');
+                        this.items.push({'date': date, 'message': info})
+                    })
+                    for (let ref in this.$refs) {
+                        this.$refs[ref].className = 'disable_process'
+                    }
+                    JSON.parse(active_threads).forEach((elem) => {
+                        this.$refs[elem].className = 'active_process'
+                    })
+
+                }, 500)
+
+
+            },
+
+        }
+    })
+</script>
+</body>
+</html>
